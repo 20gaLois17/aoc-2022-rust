@@ -9,12 +9,12 @@ pub fn part_one(input: &str) -> String {
     for command in commands {
         let chunks: Vec<&str> = command.split(' ').collect();
 
-        // parse instruction and mutate stacks accordingly
-        // ["move", "1", "from", "2", "to", "1"]
+        // command ~ ["move", "1", "from", "2", "to", "1"]
         let mut cnt: usize = chunks[1].parse::<usize>().unwrap();
         let source_no: usize = chunks[3].parse::<usize>().unwrap();
         let sink_no: usize = chunks[5].parse::<usize>().unwrap();
         while cnt > 0 {
+            // transfer items one by one
             let tmp: char = stacks[source_no-1].pop().unwrap();
             stacks[sink_no-1].push(tmp);
             cnt -= 1;
@@ -22,14 +22,41 @@ pub fn part_one(input: &str) -> String {
     }
 
     result = parse_result_from_stacks(stacks);
-    println!("day04 -> part one: {}", result);
+    println!("day05 -> part one: {}", result);
     return result;
 }
 
-pub fn part_two(input: &str) -> &str {
-    let mut result: &str = &"B";
+pub fn part_two(input: &str) -> String {
+    let mut result: String;
+    let parts: Vec<&str> = input.split("\n\n").collect();
+    let lines: Vec<&str> = parts[0].split('\n').collect();
+    let commands: Vec<&str> = parts[1].trim().split('\n').collect();
 
-    println!("day04 -> part two: {}", result);
+    let mut stacks: Vec<Vec<char>> = parse_stacks(lines);
+
+    for command in commands {
+        let chunks: Vec<&str> = command.split(' ').collect();
+
+        // parse instruction and mutate stacks accordingly
+        // ["move", "1", "from", "2", "to", "1"]
+        let mut cnt: usize = chunks[1].parse::<usize>().unwrap();
+        let source_no: usize = chunks[3].parse::<usize>().unwrap();
+        let sink_no: usize = chunks[5].parse::<usize>().unwrap();
+        let mut storage: Vec<char> = vec![];
+        while cnt > 0 {
+            let tmp: char = stacks[source_no-1].pop().unwrap();
+            // use storage to hold items that are to be transferred
+            storage.push(tmp);
+            cnt -= 1;
+        }
+        // dump storage into stacks to preserve the order of elements
+        while storage.len() > 0 {
+            stacks[sink_no-1].push(storage.pop().unwrap());
+        }
+    }
+
+    result = parse_result_from_stacks(stacks);
+    println!("day05 -> part two: {}", result);
     return result;
 }
 
@@ -68,6 +95,6 @@ mod tests {
     }
     #[test]
     fn part_two() {
-        assert_eq!(super::part_two(include_str!("testinput")), "X");
+        assert_eq!(super::part_two(include_str!("testinput")), "MCD".to_string());
     }
 }
