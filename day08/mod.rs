@@ -49,7 +49,68 @@ pub fn part_one(input: &str) -> usize {
 }
 
 pub fn part_two(input: &str) -> usize {
-    return 1;
+    let map = parse_trees(input);
+    let height = map.len();
+    let width = map[0].len();
+    let mut max_scenic_score: usize = 0;
+
+    for i in 0..height {
+        for j in 0..width {
+            let local_scenic_score = 
+                  peek(&map, (i, j), &'r')
+                * peek(&map, (i, j), &'l')
+                * peek(&map, (i, j), &'d')
+                * peek(&map, (i, j), &'u');
+            if local_scenic_score > max_scenic_score {
+                max_scenic_score = local_scenic_score;
+            }
+
+        }
+    }
+    println!("day08 -> part two: {}", max_scenic_score);
+    return max_scenic_score;
+}
+
+pub fn peek(map: &Vec<Vec<i32>>, pos: (usize, usize), dir: &char) -> usize {
+    let mut result: usize = 0;
+    let height = map.len();
+    let width = map[0].len();
+    match dir {
+        'r' => {
+            for i in pos.1+1..width {
+                result += 1;
+                if map[pos.0][i] >= map[pos.0][pos.1] {
+                    break;
+                }
+            }
+        },
+        'l' => {
+            for i in (0..pos.1).rev() {
+                result += 1;
+                if map[pos.0][i] >= map[pos.0][pos.1] {
+                    break;
+                }
+            }
+        },
+        'd' => {
+            for i in pos.0+1..height {
+                result += 1;
+                if map[i][pos.1] >= map[pos.0][pos.1] {
+                    break;
+                }
+            }
+        },
+        'u' => {
+            for i in (0..pos.0).rev() {
+                result += 1;
+                if map[i][pos.1] >= map[pos.0][pos.1] {
+                    break;
+                }
+            }
+        },
+        _ => panic!("cannot match dir")
+    }
+    return result;
 }
 
 pub fn parse_trees(input: &str) -> Vec<Vec<i32>> {
@@ -69,6 +130,6 @@ mod tests {
     }
     #[test]
     fn part_two() {
-        assert_eq!(super::part_two(include_str!("testinput")), 0);
+        assert_eq!(super::part_two(include_str!("testinput")), 8);
     }
 }
