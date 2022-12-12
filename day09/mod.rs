@@ -48,7 +48,6 @@ pub fn part_two(input: &str) -> usize {
             }
         }
     }
-    println!("{:?}", rope);
 
     let result = tail_positions.len();
     println!("day09 -> part two: {}", result);
