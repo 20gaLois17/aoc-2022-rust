@@ -27,8 +27,8 @@ fn main() {
     day06::part_one(include_str!("./day06/input"));
     day06::part_two(include_str!("./day06/input"));
 
-    // day07::part_one(include_str!("./day07/input"));
-    // day07::part_two(include_str!("./day07/input"));
+    day07::part_one(include_str!("./day07/input"));
+    day07::part_two(include_str!("./day07/input"));
 
     day08::part_one(include_str!("./day08/input"));
     day08::part_two(include_str!("./day08/input"));
