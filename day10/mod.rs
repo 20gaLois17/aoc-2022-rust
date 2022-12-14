@@ -14,8 +14,19 @@ pub fn part_one(input: &str) -> i32 {
     return result;
 }
 
-pub fn part_two(input: &str) -> usize {
-    return 1;
+pub fn part_two(input: &str) -> i32 {
+    let mut processor = Processor::new();
+    let mut _result: i32 = 0;
+    for line in input.trim().split('\n') {
+        // each line is an instruction
+        let op: Vec<&str> = line.split(' ').collect();
+        match op[0] {
+            "noop" => _result += processor.nop(),
+            "addx" => _result += processor.addx(op[1].parse::<i32>().unwrap()),
+            _ => panic!("unknown command")
+        }
+    }
+    return -1;
 }
 
 #[derive (Debug)]
@@ -35,6 +46,7 @@ impl Processor {
         let mut result: i32 = 0;
         for _ in 0..2 {
             self.cycle += 1;
+            self.draw_pixel();
             result += self.get_signal_strength();
         }
         self.x += val;
@@ -44,6 +56,7 @@ impl Processor {
         let mut result: i32 = 0;
         for _ in 0..1 {
             self.cycle += 1;
+            self.draw_pixel();
             result += self.get_signal_strength();
         }
         return result;
@@ -53,6 +66,16 @@ impl Processor {
             return self.x * self.cycle;
         } else {
             return 0;
+        }
+    }
+    fn draw_pixel(&self) {
+        if ((self.cycle-1)%40 - self.x).abs() < 2 {
+            print!("#");
+        } else {
+            print!(".");
+        }
+        if self.cycle % 40 == 0 {
+            print!("\n");
         }
     }
 }
@@ -66,6 +89,6 @@ mod tests {
     }
     #[test]
     fn part_two() {
-        assert_eq!(super::part_two(include_str!("testinput")), 0);
+        assert_eq!(super::part_two(include_str!("testinput")), 1);
     }
 }
