@@ -2,7 +2,27 @@ pub fn part_one(input: &str) -> usize {
     let mut monkeys: Vec<Monkey> = vec![];
     for monkey in input.trim().split("\n\n") {
         // TODO: parse monkeys from input
-        monkeys.push(Monkey::new());
+        // starting items
+        // operation
+        let description: Vec<&str> = monkey.split('\n').collect();
+
+        let items: Vec<usize> = description[1].replace("Starting items:", "")
+            .trim().to_string()
+            .split(',')
+            .map(|x| x.trim().parse::<usize>().unwrap())
+            .collect();
+
+        // TODO: target operation can be 'old' ...
+        let operations: Vec<String> = description[2].replace("Operation: new = old ", "")
+            .trim().to_string().split(' ')
+            .map(|x| x.to_string())
+            .collect();
+
+        let divider: usize = description[3].replace("Test: divisible by ", "").trim().to_string().parse::<usize>().unwrap();
+
+        let target_true: usize = description[4].replace("If true: throw to monkey", "").trim().to_string().parse::<usize>().unwrap();
+        let target_false: usize = description[5].replace("If false: throw to monkey", "").trim().to_string().parse::<usize>().unwrap();
+
     }
     for _ in 0..20 {
         // do monkey business
@@ -40,15 +60,23 @@ struct Monkey {
 
 impl Monkey {
     // TODO: pass constructor arguments
-    pub fn new() -> Self {
+    pub fn new(
+        items: Vec<usize>, 
+        operation_value: usize, 
+        operation_is_add: bool, 
+        divider: usize, 
+        target_true: usize, 
+        target_false: usize
+        ) -> Self {
+
         return Self {
-            items: vec![1, 2],
-            operation_value: 5,
-            operation_is_add: true,
+            items,
+            operation_value,
+            operation_is_add,
             inspections: 0,
-            divider: 3,
-            target_true: 9,
-            target_false: 11
+            divider,
+            target_true,
+            target_false,
         }
     }
     pub fn inspect_items(&mut self) {
@@ -58,7 +86,7 @@ impl Monkey {
     }
     pub fn get_items(&mut self) -> Vec<(usize, usize)> {
         return self.items.drain(..)
-            .map(|item| (item, if item % self.divider == 0 
+            .map(|item| (item, if item % self.divider == 0
                          {self.target_true} else {self.target_false})).collect();
     }
     pub fn add_item(&mut self, value: usize) {
